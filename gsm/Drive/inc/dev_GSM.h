@@ -45,8 +45,11 @@ E_GSMstatus devGSMStatus(void);
 this function send the message to the target describer and returns the sending result
 this function input:
 describer == The describer is a char array with a fixed length of 12, 
-             including 11 bits phone number and a '\0' at end.
-message ==   The message array should be ended with '\0'.
+             including 11 bits phone numbe.
+message ==   The message prepate to send.
+
+a example to use:
+devGSMSendMessage("18933193265","czpnb")
 
 this function returns:
 0 == successfully sending message. 

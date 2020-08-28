@@ -2,39 +2,35 @@
 #include "delay.h"
 #include "stdio.h"
 
-#define USART2_MAX_RECV_LEN		600					//×î´ó½ÓÊÕ»º´æ×Ö½ÚÊý
-#define USART2_MAX_SEND_LEN		600					//×î´ó·¢ËÍ»º´æ×Ö½ÚÊý
-#define USART2_RX_EN 			1					//0,²»½ÓÊÕ;1,½ÓÊÕ.
+#define USART2_MAX_RECV_LEN		600					//ï¿½ï¿½ï¿½ï¿½ï¿½Õ»ï¿½ï¿½ï¿½ï¿½Ö½ï¿½ï¿½ï¿½
+#define USART2_MAX_SEND_LEN		600					//ï¿½ï¿½ï¿½ï¿½Í»ï¿½ï¿½ï¿½ï¿½Ö½ï¿½ï¿½ï¿½
+#define USART2_RX_EN 			1					//0,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½;1,ï¿½ï¿½ï¿½ï¿½.
 
-u8  USART2_RX_BUF[USART2_MAX_RECV_LEN]; 				//½ÓÊÕ»º³å,×î´óUSART3_MAX_RECV_LEN¸ö×Ö½Ú.
-u8  USART2_TX_BUF[USART2_MAX_SEND_LEN]; 			//·¢ËÍ»º³å,×î´óUSART3_MAX_SEND_LEN×Ö½Ú
+u8  USART2_RX_BUF[USART2_MAX_RECV_LEN]; 				//ï¿½ï¿½ï¿½Õ»ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½USART3_MAX_RECV_LENï¿½ï¿½ï¿½Ö½ï¿½.
+u8  USART2_TX_BUF[USART2_MAX_SEND_LEN]; 			//ï¿½ï¿½ï¿½Í»ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½USART3_MAX_SEND_LENï¿½Ö½ï¿½
 
-//Í¨¹ýÅÐ¶Ï½ÓÊÕÁ¬Ðø2¸ö×Ö·ûÖ®¼äµÄÊ±¼ä²î²»´óÓÚ10msÀ´¾ö¶¨ÊÇ²»ÊÇÒ»´ÎÁ¬ÐøµÄÊý¾Ý.
-//Èç¹û2¸ö×Ö·û½ÓÊÕ¼ä¸ô³¬¹ý10ms,ÔòÈÏÎª²»ÊÇ1´ÎÁ¬ÐøÊý¾Ý.Ò²¾ÍÊÇ³¬¹ý10msÃ»ÓÐ½ÓÊÕµ½
-//ÈÎºÎÊý¾Ý,Ôò±íÊ¾´Ë´Î½ÓÊÕÍê±Ï.
-//½ÓÊÕµ½µÄÊý¾Ý×´Ì¬
-//[15]:0,Ã»ÓÐ½ÓÊÕµ½Êý¾Ý;1,½ÓÊÕµ½ÁËÒ»ÅúÊý¾Ý.
-//[14:0]:½ÓÊÕµ½µÄÊý¾Ý³¤¶È
-vu16 USART2_RX_STA=0;   	
+//Í¨ï¿½ï¿½ï¿½Ð¶Ï½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½2ï¿½ï¿½ï¿½Ö·ï¿½Ö®ï¿½ï¿½ï¿½Ê±ï¿½ï¿½î²»ï¿½ï¿½ï¿½ï¿½10msï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+//ï¿½ï¿½ï¿½2ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Õ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½10ms,ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.Ò²ï¿½ï¿½ï¿½Ç³ï¿½ï¿½ï¿½10msÃ»ï¿½Ð½ï¿½ï¿½Õµï¿½
+//ï¿½Îºï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Ê¾ï¿½Ë´Î½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+//ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
+//[15]:0,Ã»ï¿½Ð½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½;1,ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+//[14:0]:ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½
+vu16 USARTX_RX_STA=0;  
+#define TIMX TIM3  	
 void USART2_IRQHandler(void)
 {
 	u8 res;	      
-	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)//½ÓÊÕµ½Êý¾Ý
-	{	 
-		res =USART_ReceiveData(USART2);		 
-		if((USART2_RX_STA&(1<<15))==0)//½ÓÊÕÍêµÄÒ»ÅúÊý¾Ý,»¹Ã»ÓÐ±»´¦Àí,Ôò²»ÔÙ½ÓÊÕÆäËûÊý¾Ý
-		{ 
-			if(USART2_RX_STA<USART2_MAX_RECV_LEN)	//»¹¿ÉÒÔ½ÓÊÕÊý¾Ý
-			{
-				TIM_SetCounter(TIM3,0);//¼ÆÊýÆ÷Çå¿Õ          				//¼ÆÊýÆ÷Çå¿Õ
-				if(USART2_RX_STA==0) 				//Ê¹ÄÜ¶¨Ê±Æ÷7µÄÖÐ¶Ï 
-				{
-					TIM_Cmd(TIM3,ENABLE);//Ê¹ÄÜ¶¨Ê±Æ÷7
+	if(USART_GetITStatus(USARTX, USART_IT_RXNE) != RESET){	 
+		res = USART_ReceiveData(USARTX);		 
+		if((USARTX_RX_STA&(1<<15))==0){ 
+			if(USARTX_RX_STA<USART2_MAX_RECV_LEN){
+				TIM_SetCounter(TIMX,0);
+				if(USARTX_RX_STA==0){
+					TIM_Cmd(TIMX,ENABLE);
 				}
-				USART2_RX_BUF[USART2_RX_STA++]=res;	//¼ÇÂ¼½ÓÊÕµ½µÄÖµ	 
-			}else 
-			{
-				USART2_RX_STA|=1<<15;				//Ç¿ÖÆ±ê¼Ç½ÓÊÕÍê³É
+				USARTX_RX_BUF[USARTX_RX_STA++]=res;	
+			}else {
+				USARTX_RX_STA|=1<<15;				
 			} 
 		}
 	}  				 											 
@@ -42,11 +38,11 @@ void USART2_IRQHandler(void)
 
 void TIM3_IRQHandler(void)
 { 	
-	if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)//ÊÇ¸üÐÂÖÐ¶Ï
+	if (TIM_GetITStatus(TIMX, TIM_IT_Update) != RESET)
 	{	 			   
-		USART2_RX_STA|=1<<15;	//±ê¼Ç½ÓÊÕÍê³É
-		TIM_ClearITPendingBit(TIM3, TIM_IT_Update  );  //Çå³ýTIM7¸üÐÂÖÐ¶Ï±êÖ¾    
-		TIM_Cmd(TIM3, DISABLE);  //¹Ø±ÕTIM7 
+		USARTX_RX_STA|=1<<15;	
+		TIM_ClearITPendingBit(TIMX, TIM_IT_Update  );     
+		TIM_Cmd(TIMX, DISABLE);  
 	}	    
 }
 

@@ -8,8 +8,15 @@
 #include "usart2.h"
 
 char send_describer[200];
+
 uint8_t devGSMInitialize(void){
-	return 0;
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);  			
+	USARTX_Init(115200);       	//115200:Baud rate
+	TIM3_Int_Init(99,7199);		//99:TIM_Period,7199:TIM_Prescaler	
+	USARTX_RX_STA=0;			//flag of accept message
+	TIM_Cmd(TIM3,DISABLE);
+	if (devGSMStatus == DEV_GSM_OFF)	return 1
+	else								return 0;
 }
 
 
@@ -42,11 +49,11 @@ uint8_t devGSMSendMessage(char * describer, char * message){
 	if(sim900a_send_cmd((u8*)send_describer,">",200) == 0){
 		u2_printf("%s",message);
 		if(sim900a_send_cmd((u8*)0X1A,"+CMGS:",1000)==0){
-			printf("send message success\r\n");
+			printf("send message success\r\n");//logInfo
 			return 0;
 		}
 	}else {
-		printf("set describer--->error\r\n");
+		printf("set describer--->error\r\n");//logInfo
 		return 1;
 	}
 	return 1;
@@ -54,5 +61,8 @@ uint8_t devGSMSendMessage(char * describer, char * message){
 
 
 uint8_t devGSMDeinitialize(void){
+	USART_Cmd(USARTX, ENABLE);
+	if (devGSMStatus != DEV_GSM_OFF)	return 1
+	else								return 0;
 	return 0;
 }

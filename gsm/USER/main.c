@@ -16,15 +16,14 @@ int main(void)
 {
 	E_GSMstatus status;
 	uint8_t flag_success;
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);   //设置NVIC中断分组为2
-	LED_Init();   //LED初始化
-	Delay_Init();   //延时初始化
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);  
+	LED_Init();   //LED锟斤拷始锟斤拷
+	Delay_Init();   //锟斤拷时锟斤拷始锟斤拷
 	USART_init(115200);
 	USARTX_init(115200);
-	TIM3_Int_Init(99,7199);		//10ms中断
-	USART2_RX_STA=0;		//清零
-	TIM_Cmd(TIM3,DISABLE);			//关闭定时器7
-//	KEY_Init();   //按键初始化
+	TIM3_Int_Init(99,7199);		
+	USART2_RX_STA=0;		
+	TIM_Cmd(TIM3,DISABLE);			
 	printf("This is ready\r\n");  
 
 	

@@ -17,7 +17,7 @@ void USARTX_init(uint32_t bound)
 	
 	RCC_APB1PeriphClockCmd(RCC_APB2Periph_GPIOA|RCC_APB1Periph_USART2,ENABLE);  
 	
-	USART_DeInit(USART2);  //¸´Î»´®¿Ú3
+	USART_DeInit(USARTX);  
 	
 	GPIO_InitStruct.GPIO_Pin=GPIO_Pin_TX;   
 	GPIO_InitStruct.GPIO_Mode=GPIO_Mode_AF_PP;   
@@ -38,18 +38,15 @@ void USARTX_init(uint32_t bound)
 	USART_InitStruct.USART_HardwareFlowControl=USART_HardwareFlowControl_None;   
 	USART_Init(USARTX,&USART_InitStruct);   
 	
-	USART_Cmd(USARTX, ENABLE);                    //Ê¹ÄÜ´®¿Ú 
+	USART_Cmd(USARTX, ENABLE);                     
 	
-	//Ê¹ÄÜ½ÓÊÕÖÐ¶Ï
-  USART_ITConfig(USARTX, USART_IT_RXNE, ENABLE);//¿ªÆôÖÐ¶Ï   
-	
-	//ÉèÖÃÖÐ¶ÏÓÅÏÈ¼¶
+  	USART_ITConfig(USARTX, USART_IT_RXNE, ENABLE); 
 	
 	NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=2 ;//ÇÀÕ¼ÓÅÏÈ¼¶3
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;		//×ÓÓÅÏÈ¼¶3
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			//IRQÍ¨µÀÊ¹ÄÜ
-	NVIC_Init(&NVIC_InitStructure);	//¸ù¾ÝÖ¸¶¨µÄ²ÎÊý³õÊ¼»¯VIC¼Ä´æÆ÷
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=2 ;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;		
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			
+	NVIC_Init(&NVIC_InitStructure);	
 
 }
 
@@ -60,12 +57,12 @@ void u2_printf(char* fmt,...)
 	va_start(ap,fmt);
 	vsprintf((char*)USART2_TX_BUF,fmt,ap);
 	va_end(ap);
-	i=strlen((const char*)USART2_TX_BUF);		//´Ë´Î·¢ËÍÊý¾ÝµÄ³¤¶È
+	i=strlen((const char*)USART2_TX_BUF);		//ï¿½Ë´Î·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÝµÄ³ï¿½ï¿½ï¿½
 	printf("%s\r\n",USART2_TX_BUF);
-	for(j=0;j<i;j++)							//Ñ­»··¢ËÍÊý¾Ý
+	for(j=0;j<i;j++)							//Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	{
 		USART_SendData(USART2,USART2_TX_BUF[j]); 
-	  while(USART_GetFlagStatus(USART2,USART_FLAG_TC)== RESET){  //Ñ­»··¢ËÍ,Ö±µ½·¢ËÍÍê±Ï  
+	  while(USART_GetFlagStatus(USART2,USART_FLAG_TC)== RESET){  //Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  
 		};  
 	} 
 }
